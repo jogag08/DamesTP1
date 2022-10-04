@@ -4,6 +4,7 @@ import pygame
 
 class Grid:
     def __init__(self):
+        print('coucou')
         pass
 
     def drawGrid(self, width, height):

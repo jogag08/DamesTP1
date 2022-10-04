@@ -11,6 +11,7 @@ class Window(QWidget):
         self.timer = QTimer()
         self.game = game
         self.timer.timeout.connect(self.pygameLoop)
+        self.timer.start(0)
         self.initUi()
 
     def pygameLoop(self):
@@ -19,14 +20,13 @@ class Window(QWidget):
 
     def initUi(self):
         self.setWindowTitle("Dames")
-        self.setGeometry(10,10,300,200) #grandeur de l'écran
+        self.setGeometry(10,50,300,200) #grandeur de l'écran
 
         self.button = QPushButton("Bonjour",self)
         #self.button.setToolTip("Don't you dare !")
         self.button.move(100,70)
         self.button.clicked.connect(self.onClick)
-
         self.show()
 
     def onClick(self):
-        pass
+        print('ca clique')

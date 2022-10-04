@@ -7,7 +7,7 @@ from PySide6.QtCore import QTimer
 from Grid import Grid
 
 class Game:
-    grid : Grid()
+
     def __init__(self):
         pygame.init()
         self.timer = Timer()
@@ -17,28 +17,38 @@ class Game:
 
     def gameInit(self):
         self.size = self.width, self.height = 800, 600
-        self.black = [0,0,0]
-
-        self.screen = pygame.display.set_mode(self.size)
+        red = [255,0,0]
+        screen = pygame.display.set_mode(self.size)
+        screen.fill(red)
         pass
 
     def initGrid(self):
         self.grid.drawGrid(self.width, self.height)
 
     def render(self):
-        self.screen.fill(self.black)
-        self.grid.drawGrid()
+        self.grid.initGrid(self)
         #self.screen.blit(self.maxime, self.maximerect) mettre une surface sur une autre surface
+        print('display')
         pygame.display.flip() #equivalent au render present dans SDL
 
     def loop(self):
-            self.timer.update()
-            dt = self.timer.get_deltaTime()
+        self.timer.update()
+        dt = self.timer.get_deltaTime
+        self.processInput()
+        #Update Actors
+        self.render()
+        return self.shouldQuit
 
-            self.processInput()
-            #Update Actors
-            self.render()
-            return self.shouldQuit
+    def processInput(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.shouldQuit = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == 119: #119 c'est W, 115 c'est S
+                    print('cul') #entrer ce que la touche va faire
+            if event.type == pygame.KEYUP:
+                if event.key == 115:
+                    pass #entrer ce que la touche va faire
 
 class Timer:
     _clock = None
