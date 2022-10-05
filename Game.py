@@ -3,31 +3,33 @@ import pygame
 
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton
 from PySide6.QtCore import QTimer
+from pygame import Surface
 
 from Grid import Grid
 
 class Game:
     grid:Grid
+    screen:Surface
     def __init__(self):
         pygame.init()
         self.timer = Timer()
         self.gameInit()
         self.shouldQuit = False
-        self.grid = Grid()
+        self.grid = Grid(8, 8, self.width, self.height)
         pass
 
     def gameInit(self):
-        self.size = self.width, self.height = 800, 600
+        self.size = self.width, self.height = 800, 800
         red = [255,0,0]
-        screen = pygame.display.set_mode(self.size)
-        screen.fill(red)
+        self.screen = pygame.display.set_mode(self.size)
+        self.screen.fill(red)
         pass
 
     def initGrid(self):
         pass
 
     def render(self):
-        self.grid.drawGrid(8,8, self.width, self.height)
+        self.grid.renderGrid(self.screen)
         pygame.display.flip() #equivalent au render present dans SDL
 
         #self.screen.blit(self.maxime, self.maximerect) mettre une surface sur une autre surface
