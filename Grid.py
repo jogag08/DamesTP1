@@ -1,19 +1,25 @@
 # This Python file uses the following encoding: utf-8
 
 import pygame
+from Cell import Cell
 
 class Grid:
+    cell:Cell = []
     def __init__(self):
-        print('coucou')
         pass
 
-    def drawGrid(self, width, height):
-        cellSize = 40
-        screenWidth = self.game.width
-        screenHeight = self.game.height
-        screenSize = self.width, self.height = screenWidth, screenHeight
-        for i in range(0, screenWidth, cellSize):
-            for j in range(0, screenHeight, cellSize):
-                cell = pygame.Rect(i, j, cellSize, cellSize)
-                pygame.draw.rect(screenSize, (255,255,255), cell,1)
-
+    def drawGrid(self,gridWidth, gridHeight, screenWidth, screenHeight):
+        color1 = (250, 230, 205)
+        color2 = (115, 65, 0)
+        cellSize = 50
+        cellCount = gridWidth * gridHeight
+        for i in range(0, cellCount):
+            x = i % gridWidth * gridWidth
+            y = i / gridWidth * gridHeight
+            print(x)
+            if i % 2 == 0:
+                color = color1
+            else:
+                color = color2
+            c:Cell = Cell(x, y, cellSize, color, screenWidth, screenHeight)
+            self.cell.append(c)

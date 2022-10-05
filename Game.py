@@ -7,12 +7,13 @@ from PySide6.QtCore import QTimer
 from Grid import Grid
 
 class Game:
-
+    grid:Grid
     def __init__(self):
         pygame.init()
         self.timer = Timer()
         self.gameInit()
         self.shouldQuit = False
+        self.grid = Grid()
         pass
 
     def gameInit(self):
@@ -23,13 +24,13 @@ class Game:
         pass
 
     def initGrid(self):
-        self.grid.drawGrid(self.width, self.height)
+        pass
 
     def render(self):
-        self.grid.initGrid(self)
-        #self.screen.blit(self.maxime, self.maximerect) mettre une surface sur une autre surface
-        print('display')
+        self.grid.drawGrid(8,8, self.width, self.height)
         pygame.display.flip() #equivalent au render present dans SDL
+
+        #self.screen.blit(self.maxime, self.maximerect) mettre une surface sur une autre surface
 
     def loop(self):
         self.timer.update()
@@ -44,10 +45,8 @@ class Game:
             if event.type == pygame.QUIT:
                 self.shouldQuit = True
             if event.type == pygame.KEYDOWN:
-                if event.key == 119: #119 c'est W, 115 c'est S
-                    print('cul') #entrer ce que la touche va faire
-            if event.type == pygame.KEYUP:
-                if event.key == 115:
+                if event.key == pygame.K_w:
+                    print('test') #entrer ce que la touche va faire
                     pass #entrer ce que la touche va faire
 
 class Timer:
