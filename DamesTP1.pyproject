@@ -1,3 +1,3 @@
 {
-    "files": ["Game.py","Actor.py","Window.py","main.py","Grid.py","Cell.py"]
+    "files": ["Grid.py","Cell.py","Window.py","Pion.py","main.py","Game.py","GridInfo.py"]
 }

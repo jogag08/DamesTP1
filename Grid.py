@@ -6,29 +6,64 @@ from Cell import Cell
 
 class Grid:
     cell:Cell = []
-    def __init__(self, gridWidth, gridHeight, screenWidth, screenHeight):
-        self.initGrid(gridWidth, gridHeight, screenWidth, screenHeight)
+    gridWidth:int = 0
+    gridHeight:int = 0
+    color1:int = (255, 240, 225)
+    colorId1:str = "white"
+    color2:int = (110, 0, 0)
+    colorId2:str = "black"
+    cellSize:int = 0
+    x:int = 0
+    y:int = 0
+    def __init__(self, gridSize, screenWidth, screenHeight):
+        self.initGrid(gridSize, screenWidth, screenHeight)
 
-    def initGrid(self,gridWidth, gridHeight, screenWidth, screenHeight):
-        color1 = (250, 230, 205)
-        color2 = (115, 65, 0)
-        cellSize = 125
-        cellCount = gridWidth * gridHeight
+    def switchColors(self):
+        tempColor = self.color2
+        self.color2 = self.color1
+        self.color1 = tempColor
+        tempColorId = self.colorId2
+        self.colorId2 = self.colorId1
+        self.colorId1 = tempColorId
+
+    def initGrid(self, size, screenWidth, screenHeight):
+        self.setSize(size)
+        cellCount = self.gridWidth * self.gridHeight
+        self.cellSize = screenWidth / self.gridWidth
         for i in range(0, cellCount):
-            x:int = int((i % gridWidth) * cellSize)
-            y:int = int((i / gridWidth) * cellSize)
-            print(str(y))
-            if i % 2 == 0 && i % 8 == 0:
-                color = color1
+            cellId:int = i
+            self.x = int((i % self.gridWidth) * self.cellSize)
+            #y:int = int((i / gridWidth) * self.cellSize)
+            if i > 0 :
+                if i % self.gridWidth == 0:
+                    self.switchColors()
+                    self.y += self.cellSize
+            if i % 2 == 0:
+                color = self.color1
+                colorId = self.colorId1
             else:
-                color = color2
-            c:Cell = Cell(x, y, cellSize, color, screenWidth, screenHeight)
+                color = self.color2
+                colorId = self.colorId2
+            c:Cell = Cell(self.x, self.y, self.cellSize, color, cellId, colorId, screenWidth, screenHeight)
             self.cell.append(c)
 
+    def setSize(self, size):
+        self.gridWidth = size
+        self.gridHeight = size
+
+    def getWidth(self):
+        return self.gridWidth
 
     def renderGrid(self, screen:Surface):
          for c in self.cell:
              cell:Cell = c
-             cell.renderCell(screen)
+             cell.render(screen)
+
+    def getLength(self):
+        return self.cell.__len__()
+
+
+
+
 
 
