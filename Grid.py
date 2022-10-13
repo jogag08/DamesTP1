@@ -33,11 +33,12 @@ class Grid:
         for i in range(0, cellCount):
             cellId:int = i
             self.x = int((i % self.gridWidth) * self.cellSize)
-            #y:int = int((i / gridWidth) * self.cellSize)
+            #y:int = int((i / self.gridWidth) * self.cellSize
             if i > 0 :
                 if i % self.gridWidth == 0:
-                    self.switchColors()
                     self.y += self.cellSize
+                    if size % 2 == 0 :
+                        self.switchColors()
             if i % 2 == 0:
                 color = self.color1
                 colorId = self.colorId1
@@ -61,6 +62,11 @@ class Grid:
 
     def getLength(self):
         return self.cell.__len__()
+
+    def Update(self):
+        for c in self.cell:
+            if c.isClicked() == False:
+                c.color = (100,100,100)
 
 
 

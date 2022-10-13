@@ -12,17 +12,17 @@ class Game:
     grid:Grid
     listCellsNoirs = []
     pion:Pion = []
-    mousePos:int = []
-    idx:int
+    mousePos:int = [0,0]
+    idx:int = 0
     screen:Surface
     def __init__(self):
         pygame.init()
         self.timer = Timer()
         self.gameInit()
         self.shouldQuit = False
-        self.grid = Grid(8, self.width, self.height)
+        self.grid = Grid(5, self.width, self.height)
         self.getCellsNoirs()
-        self.initPions(12)
+        self.initPions(5)
 
     def gameInit(self):
         self.size = self.width, self.height = 800, 800
@@ -43,7 +43,7 @@ class Game:
         self.timer.update()
         dt = self.timer.get_deltaTime
         self.processInput()
-        #Update Actors
+        self.grid.Update()
         self.render()
         return self.shouldQuit
 
@@ -51,8 +51,11 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.shouldQuit = True
-            self.setMousePosOnClick(event)
-            #self.setClickedCell()
+            if event.type == pygame.MOUSEMOTION:
+                self.setMousePos()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.onClick()
+
 
     def getCellsNoirs(self):
         for i in range(self.grid.getLength()):
@@ -77,22 +80,27 @@ class Game:
             self.pion.append(pn)
             self.pion.append(pb)
 
-    def setMousePosOnClick(self, ev):
-        if ev.type == pygame.MOUSEBUTTONUP:
-            self.mousePos = pygame.mouse.get_pos()
+    def setMousePos(self):
+        self.mousePos = pygame.mouse.get_pos()
 
-    def getMousePosXOnClick(self):
+    def onClick(self):
+        self.setClickedCellIdx()
+
+    def getMousePosX(self):
         return self.mousePos[0]
 
-    def getMousePosYOnClick(self):
+    def getMousePosY(self):
         return self.mousePos[1]
 
-    def getClickedCellIdx(self):
+    def setClickedCellIdx(self):
         sizeCell = self.grid.cell[0].getSize()
         gridWidth:int = self.grid.getWidth()
-        x:int = int(self.getMousePosXOnClick() / sizeCell)
-        y:int = int(self.getMousePosYOnClick() / sizeCell)
+        x:int = int(self.getMousePosX() / sizeCell)
+        y:int = int(self.getMousePosY() / sizeCell)
         self.idx = y * gridWidth + x
+        self.getClickedCellIdx()
+
+    def getClickedCellIdx(self):
         return self.idx
 
 class Timer:

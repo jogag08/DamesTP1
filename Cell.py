@@ -48,3 +48,6 @@ class Cell:
     def setColor(self, newColor:int = []):
         self.color = newColor
 
+    def isClicked(self):
+        return self.isClicked
+
