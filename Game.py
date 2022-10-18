@@ -128,12 +128,19 @@ class Game:
         x:int = int(self.getMousePosX() / sizeCell)
         y:int = int(self.getMousePosY() / sizeCell)
         self.__idx = y * gridWidth + x
+        #for i in range(self.__grid.cell.__len()__):
+        #    if self.__idx == self.__grid.cell[i]
+
 
     def getCellIdx(self):
         return self.__idx
 
     def setOldCellIdx(self):
-        self.__oldIdx = self.getCellIdx()
+        for i in range(self.__grid.cell.__len__()):
+            if self.__grid.cell[self.getCellIdx()].getColorId() == "white":
+                self.__oldIdx = self.__oldIdx
+            else:
+                self.__oldIdx = self.getCellIdx()
 
     def getOldCellIdx(self):
         return self.__oldIdx

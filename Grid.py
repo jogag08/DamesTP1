@@ -49,6 +49,11 @@ class Grid:
                 self.originalColor = self.color2
             c:Cell = Cell(self.x, self.y, self.cellSize, color, cellIdx, colorId, screenWidth, screenHeight)
             self.cell.append(c)
+            self.setWhiteCellsOccupied(c)
+
+    def setWhiteCellsOccupied(self, c):
+        if c.getColorId() == "white":
+            c.setIsOccupied(True)
 
     def setSize(self, size):
         self.gridWidth = size
