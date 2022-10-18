@@ -5,23 +5,60 @@ from pygame import Surface
 from Cell import Cell
 
 class Pion(Cell):
-    image:str
-    type:str
-    def __init__(self, x, y ,size, color, id, colorId, screenW, screenH, image:str):   #ARGUMENTS POUR CELL def __init__(self, x, y, size, color, id, colorId, screenW, screenH):
-        super().__init__(x, y, size, color, id, colorId, screenW, screenH)
+    __image:str
+    __type:str
+    __team:str
+    __gridPosition:int
+    __isSelected:bool
+    def __init__(self, x, y ,size, color, idx, colorId, screenW, screenH, image, type, team, gridPosition):
+        super().__init__(x, y, size, color, idx, colorId, screenW, screenH)
         self.setPionImage(image)
-        self.setType()
+        self.setType(type)
+        self.setTeam(team)
+        self.setGridPosition(gridPosition)
+        self.setIsSelected(False)
 
     def setPionImage(self, path:str):
         self.image = pygame.image.load(path)
 
     def renderPion(self, screen:Surface, cellSize):
         resizedImage = pygame.transform.scale(self.image, (cellSize, cellSize))
-        screen.blit(resizedImage, (self.x, self.y))
+        screen.blit(resizedImage, (self._x, self._y))
 
-    def setType(self):
-        self.type = "pion"
+    def setType(self, t):
+        self.__type = t
 
-    def Update(self):
-        pass
+    def getType(self):
+        return self.__type
+
+    def setTeam(self, t):
+        self.__team = t
+
+    def getTeam(self):
+        return self.__team
+
+    def setIdx(self, newIdx):
+        self._idx = newIdx
+
+    def setGridPosition(self, p):
+        self.__gridPosition = p
+
+    def getGridPosition(self):
+        return self.__gridPosition
+
+    def setIsSelected(self, b):
+        self.__isSelected = b
+
+    def getIsSelected(self):
+        return self.__isSelected
+
+    def getX(self):
+        return self._x
+
+    def getY(self):
+        return self._y
+
+    def Move(self, newX, newY):
+        self._x = newX
+        self._y = newY
 

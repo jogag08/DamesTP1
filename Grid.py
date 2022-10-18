@@ -3,6 +3,7 @@
 import pygame
 from pygame import Surface
 from Cell import Cell
+from Pion import Pion
 
 class Grid:
     cell:Cell = []
@@ -31,9 +32,8 @@ class Grid:
         cellCount = self.gridWidth * self.gridHeight
         self.cellSize = screenWidth / self.gridWidth
         for i in range(0, cellCount):
-            cellId:int = i
+            cellIdx:int = i
             self.x = int((i % self.gridWidth) * self.cellSize)
-            #y:int = int((i / self.gridWidth) * self.cellSize
             if i > 0 :
                 if i % self.gridWidth == 0:
                     self.y += self.cellSize
@@ -42,10 +42,12 @@ class Grid:
             if i % 2 == 0:
                 color = self.color1
                 colorId = self.colorId1
+                self.originalColor = self.color1
             else:
                 color = self.color2
                 colorId = self.colorId2
-            c:Cell = Cell(self.x, self.y, self.cellSize, color, cellId, colorId, screenWidth, screenHeight)
+                self.originalColor = self.color2
+            c:Cell = Cell(self.x, self.y, self.cellSize, color, cellIdx, colorId, screenWidth, screenHeight)
             self.cell.append(c)
 
     def setSize(self, size):
@@ -63,13 +65,27 @@ class Grid:
     def getLength(self):
         return self.cell.__len__()
 
-    def Update(self):
+    def Update(self, click, idx, oldIdx):
         for c in self.cell:
-            if c.isClicked() == False:
-                c.color = (100,100,100)
+            cell:Cell = c
+            if click:
+                self.checkIfClicked(cell, idx, oldIdx)
+            self.setHighLight(cell)
 
+    def checkIfClicked(self, c, idx, oldIdx):
+        if (c.getIsOccupiedBy() == "blanc" or c.getIsOccupiedBy() == "none") and c.getColorId() == 'black':
+            if c.getIdx() == idx == oldIdx and c.getIsClicked() == True:
+                c.setIsClicked(False)
+            elif c.getIdx() == idx == oldIdx and c.getIsClicked() == False:
+                c.setIsClicked(True)
+            elif c.getIdx() == idx and c.getColorId() == 'black':
+                c.setIsClicked(True)
+            else:
+                c.setIsClicked(False)
 
-
-
-
-
+    def setHighLight(self, c):
+        originalColor = self.color2
+        if c.getIsClicked() == True and c.getColorId() == 'black':
+            c.setColor([240,60,30])
+        if c.getIsClicked() == False and c.getColorId() == 'black':
+            c.setColor(originalColor)
