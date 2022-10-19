@@ -10,9 +10,9 @@ class Grid:
     gridWidth:int = 0
     gridHeight:int = 0
     color1:int = (255, 240, 225)
-    colorId1:str = "white"
+    colorId1:str = "blanc"
     color2:int = (110, 0, 0)
-    colorId2:str = "black"
+    colorId2:str = "noir"
     cellSize:int = 0
     x:int = 0
     y:int = 0
@@ -49,11 +49,6 @@ class Grid:
                 self.originalColor = self.color2
             c:Cell = Cell(self.x, self.y, self.cellSize, color, cellIdx, colorId, screenWidth, screenHeight)
             self.cell.append(c)
-            self.setWhiteCellsOccupied(c)
-
-    def setWhiteCellsOccupied(self, c):
-        if c.getColorId() == "white":
-            c.setIsOccupied(True)
 
     def setSize(self, size):
         self.gridWidth = size
@@ -70,27 +65,34 @@ class Grid:
     def getLength(self):
         return self.cell.__len__()
 
-    def Update(self, click, idx, oldIdx):
-        for c in self.cell:
-            cell:Cell = c
-            if click:
-                self.checkIfClicked(cell, idx, oldIdx)
-            self.setHighLight(cell)
+    #def Update(self, click, idx, oldIdx):
+    #    for c in self.cell:
+    #        cell:Cell = c
+    #        if click:
+    #            self.checkIfClicked(cell, idx, oldIdx)
+    #        self.setHighLight(cell)
 
-    def checkIfClicked(self, c, idx, oldIdx):
-        if (c.getIsOccupiedBy() == "blanc" or c.getIsOccupiedBy() == "none") and c.getColorId() == 'black':
-            if c.getIdx() == idx == oldIdx and c.getIsClicked() == True:
-                c.setIsClicked(False)
-            elif c.getIdx() == idx == oldIdx and c.getIsClicked() == False:
-                c.setIsClicked(True)
-            elif c.getIdx() == idx and c.getColorId() == 'black':
-                c.setIsClicked(True)
-            else:
-                c.setIsClicked(False)
+    #def checkIfClicked(self, c, idx, oldIdx):
+    #    if (c.getIsOccupiedBy() == "blanc" or c.getIsOccupiedBy() == "none") and c.getColorId() == "noir":
+    #        print("allo")
+            #if c.getIdx() == idx == oldIdx and c.getIsClicked() == True:
+            #    #print("cond1")
+            #    c.setIsClicked(False)
+            #if c.getIdx() == idx == oldIdx and c.getIsClicked() == False:
+            #    #print("cond2")
+            #    c.setIsClicked(True)
+            #elif c.getIdx() == idx:
+            #    #print("cond3")
+            #    c.setIsClicked(True)
+            #else:
+            #    #print("cond4")
+            #    c.setIsClicked(False)
 
-    def setHighLight(self, c):
-        originalColor = self.color2
-        if c.getIsClicked() == True and c.getColorId() == 'black':
-            c.setColor([240,60,30])
-        if c.getIsClicked() == False and c.getColorId() == 'black':
-            c.setColor(originalColor)
+    #def setHighLight(self, c):
+    #    originalColor = self.color2
+    #    if c.getIsClicked() == True and c.getColorId() == "noir":
+    #        c.setColor([240,60,30])
+    #        print("on")
+    #    if c.getIsClicked() == False and c.getColorId() == "noir":
+    #        print("off")
+    #        c.setColor(originalColor)

@@ -15,8 +15,8 @@ class Game:
     __pionNoir:Pion = []
     __pion:Pion = []
     __selectPionIdx = 1000
+    __selectPion = None
     __pionIdToMove = 1000
-    __cellsNoirs:Cell = []
     __mousePos:int = [0,0]
     __mouseClick:bool = False
     __idx:int = 0
@@ -28,7 +28,7 @@ class Game:
         self.gameInit()
         self.shouldQuit = False
         self.__grid = Grid(5, self.width, self.height)
-        self.setCellsNoirs()
+        #self.setCellsNoirs()
         self.initPions(5)
 
     def gameInit(self):
@@ -47,7 +47,7 @@ class Game:
         self.timer.update()
         dt = self.timer.get_deltaTime
         self.processInput()
-        self.__grid.Update(self.getMouseClick(), self.getCellIdx(), self.getOldCellIdx())
+        self.TEST()
         self.setMouseClick(False)
         self.updateStates()
         self.render()
@@ -62,46 +62,44 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.onClick()
 
-    def setCellsNoirs(self):
-        for i in range(self.__grid.getLength()):
-            if self.__grid.cell[i].getColorId() == "black":
-                cn = self.__grid.cell[i]
-                self.__cellsNoirs.append(cn)
+    #def setCellsNoirs(self):
+    #    for i in range(self.__grid.getLength()):
+    #        if self.__grid.cell[i].getColorId() == "black":
+    #            cn = self.__grid.cell[i]
+    #            self.__cellsNoirs.append(cn)
 
-    def getCellsNoirs(self):
-        return self.__listCellsNoirs
-
-    def getPionsBlanc(self):
-        cn = self.getCellsNoirs()
-        for i in range(cn.__len__()):
-            print(cn[i])
+    #def getCellsNoirs(self):
+    #    return self.__listCellsNoirs
 
     def initPions(self, nbrPionsJoueur):
         idx = 0
-        for i in range(nbrPionsJoueur): #initialisation des pions
-            xNoir = self.__cellsNoirs[i].getX()
-            yNoir = self.__cellsNoirs[i].getY()
-
-            xBlanc = self.__cellsNoirs[self.__cellsNoirs.__len__()- 1 - i].getX()
-            yBlanc = self.__cellsNoirs[self.__cellsNoirs.__len__()- 1 - i].getY()
-
-            size = self.__cellsNoirs[i].getSize()
-            color = (255,255,255)
-            colorId = self.__cellsNoirs[i].getColorId()
-
-            type = "pion"
-            teamN = "noir"
-            teamB = "blanc"
-            imgNoir = "pionNoir.png"
-            imgBlanc = "pionBlanc.png"
-
-            pn:Pion = Pion(xNoir, yNoir, size, color, idx, colorId, self.width, self.height, imgNoir, type, teamN, self.__cellsNoirs[i].getIdx())
-            idx += 1
-            pb:Pion = Pion(xBlanc, yBlanc, size, color, idx, colorId, self.width, self.height, imgBlanc, type, teamB, self.__cellsNoirs[self.__cellsNoirs.__len__()- 1 - i].getIdx())
-            idx += 1
-            self.__pion.append(pn)
-            self.__pion.append(pb)
-
+        type = "pion"
+        teamN = "noir"
+        teamB = "blanc"
+        imgNoir = "pionNoir.png"
+        imgBlanc = "pionBlanc.png"
+        color = (255,255,255)
+        idx = 0
+        for i in range(nbrPionsJoueur*2): #initialisation des pions blancs
+            if self.__grid.cell[self.__grid.cell.__len__() - 1 - i].getColorId() == "noir":
+                x = self.__grid.cell[self.__grid.cell.__len__() - 1 - i].getX()
+                y = self.__grid.cell[self.__grid.cell.__len__() - 1 - i].getY()
+                size = self.__grid.cell[i].getSize()
+                colorId = self.__grid.cell[i].getColorId()
+                p:Pion = Pion(x, y, size, color, idx, colorId, self.width, self.height, imgBlanc, type, teamB, self.__grid.cell[self.__grid.cell.__len__() - 1 - i].getIdx())
+                idx += 1
+                self.__pion.append(p)
+        idx -= 1
+        for i in range(nbrPionsJoueur*2): #initalisation de pions noirs
+            if self.__grid.cell[i].getColorId() == "noir":
+                x = self.__grid.cell[i].getX()
+                y = self.__grid.cell[i].getY()
+                size = self.__grid.cell[i].getSize()
+                colorId = self.__grid.cell[i].getColorId()
+                p:Pion = Pion(x, y, size, color, idx, colorId, self.width, self.height, imgNoir, type, teamN, self.__grid.cell[i].getIdx())
+                idx += 1
+                self.__pion.append(p)
+#
     def setMousePos(self):
         self.mousePos = pygame.mouse.get_pos()
 
@@ -127,59 +125,92 @@ class Game:
         gridWidth:int = self.__grid.getWidth()
         x:int = int(self.getMousePosX() / sizeCell)
         y:int = int(self.getMousePosY() / sizeCell)
-        self.__idx = y * gridWidth + x
-        #for i in range(self.__grid.cell.__len()__):
-        #    if self.__idx == self.__grid.cell[i]
-
+        test = y * gridWidth + x
+        if self.__grid.cell[test].getColorId() == "noir":
+            self.__idx = test
+        elif self.__grid.cell[test].getColorId() == "blanc":
+            self.__idx = self.__idx
 
     def getCellIdx(self):
         return self.__idx
 
     def setOldCellIdx(self):
-        for i in range(self.__grid.cell.__len__()):
-            if self.__grid.cell[self.getCellIdx()].getColorId() == "white":
-                self.__oldIdx = self.__oldIdx
-            else:
-                self.__oldIdx = self.getCellIdx()
+        self.__oldIdx = self.getCellIdx()
 
     def getOldCellIdx(self):
         return self.__oldIdx
 
     def checkSelectedPion(self):
+        sel = False
         for i in range(self.__pion.__len__()):
-            #print(i,self.__pion[i].getIsSelected())
-            for j in range(self.__cellsNoirs.__len__()):
-                if self.__pion[i].getGridPosition() == self.__cellsNoirs[j].getIdx() and self.__cellsNoirs[j].getIsClicked() == True and self.__cellsNoirs[j].getIsOccupiedBy() == "blanc":
-                    self.__pion[i].setIsSelected(True)
-                    self.__selectPionIdx = self.__pion[i].getIdx()
-                    #self.setSelectedPion(self.__pion[i].getGridPosition())
-                elif self.__pion[i].getGridPosition() == self.__cellsNoirs[j].getIdx() and self.__cellsNoirs[j].getIsClicked() == False and self.__cellsNoirs[j].getIsOccupiedBy() == "blanc":
-                    self.__pion[i].setIsSelected(False)
+            if self.__pion[i].getTeam() == "blanc":
+                for j in range(self.__grid.cell.__len__()):
+                    if self.__grid.cell[j].getIsClicked() == True and self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx():
+                        self.__pion[i].setIsSelected(True)
+                        self.__selectPion = self.__pion[i]
+                        sel = True
+                    elif self.__grid.cell[j].getIsClicked() == False and self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx():
+                        self.__pion[i].setIsSelected(False)
+            else:
+                for i in range(self.__pion.__len__()):
+                    if self.__pion[i].getTeam() == "blanc" and not sel:
+                        self.__pion[i].setIsSelected(False)
 
-    #def setSelectedPion(self, pos):
-    #    self.__selectPionPos = pos
-
-    #def getSelectedPion(self):
-    #    return self.__selectPionPos
+        #for i in range(self.__pion.__len__()):
+        #    #print(i,self.__pion[i].getIsSelected())
+        #    for j in range(self.__grid.cell.__len__()):
+        #        #print("posPion",self.__pion[i].getGridPosition(), "cellPos", self.__grid.cell[j].getIdx())
+        #        if self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx() and self.__grid.cell[j].getIsClicked() == True and self.__grid.cell[j].getIsOccupiedBy() == "blanc":
+        #            self.__pion[i].setIsSelected(True)
+        #            self.__selectPionIdx = self.__pion[i].getIdx()
+        #        elif self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx() and self.__grid.cell[j].getIsClicked() == False and self.__grid.cell[j].getIsOccupiedBy() == "blanc":
+        #            self.__pion[i].setIsSelected(False)
 
     def setOccupiedGridCells(self):
         for i in range(self.__pion.__len__()):
-            for j in range(self.__cellsNoirs.__len__()):
-                if self.__pion[i].getGridPosition() == self.__cellsNoirs[j].getIdx():
-                    self.__cellsNoirs[j].setIsOccupied(True)
+            for j in range(self.__grid.cell.__len__()):
+                if self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx():
                     if self.__pion[i].getTeam() == "blanc":
-                        self.__cellsNoirs[j].setIsOccupiedBy("blanc")
+                        self.__grid.cell[j].setIsOccupiedBy("blanc")
                     elif self.__pion[i].getTeam() == "noir":
-                        self.__cellsNoirs[j].setIsOccupiedBy("noir")
+                        self.__grid.cell[j].setIsOccupiedBy("noir")
+                    else:
+                        self.__grid.cell[j].setIsOccupiedBy("none")
+
+    def setClickedCell(self):
+        for i in range(self.__grid.cell.__len__()):
+            if (self.__idx == self.__grid.cell[i].getIdx()) and self.__grid.cell[i].getColorId() == "noir" and (self.__grid.cell[i].getIsOccupiedBy() == "blanc" or self.__grid.cell[i].getIsOccupiedBy() == "none"):
+                self.__grid.cell[i].setIsClicked(True)
+                self.setHighLight(self.__grid.cell[i])
+            elif self.__idx == self.__grid.cell[i].getIdx() and self.__grid.cell[i].getColorId() == "noir" and self.__grid.cell[i].getIsOccupiedBy() == "noir":
+                for k in range(self.__pion.__len__()):
+                    self.__pion[k].setIsSelected(False)
+                    self.__idx = 0
+                    self.__oldIdx = 0
+
+            else:
+                self.__grid.cell[i].setIsClicked(False)
+                self.setHighLight(self.__grid.cell[i])
+
+    def setHighLight(self,c):
+        originalColor = (110, 0, 0)
+        if c.getIsClicked() == True and c.getColorId() == "noir":
+            c.setColor([240,60,30])
+        if c.getIsClicked() == False and c.getColorId() == "noir":
+            c.setColor(originalColor)
+
+    def TEST(self):
+        print(self.__selectPion)
+        #for i in range(self.__grid.cell.__len__()):
+        #    print(self.__grid.cell[i].getIsClicked())
 
     def updatePionsState(self):
         self.checkSelectedPion()
         self.movePlayerPion()
 
     def updateCellsState(self):
+        self.setClickedCell()
         self.setOccupiedGridCells()
-        #for i in range(self.__grid.cell.__len__()):
-        #    print(i, self.__grid.cell[i].getIsOccupiedBy())
 
     def updateStates(self):
         self.updatePionsState()
@@ -191,17 +222,35 @@ class Game:
                 self.__pionIdToMove = i
         if self.__pionIdToMove != 1000:
             for j in range(self.__grid.cell.__len__()):
-                if self.__grid.cell[j].getIsClicked() == True and self.__grid.cell[j].getIsOccupied() == False:
+                if self.__grid.cell[j].getIsClicked() == True and (self.__grid.cell[j].getIsOccupiedBy() == "none"):
                     self.__pion[self.__pionIdToMove].Move(self.__grid.cell[j].getX(), self.__grid.cell[j].getY())
                     self.__pion[self.__pionIdToMove].setGridPosition(j)
                     self.__pion[self.__pionIdToMove].setIsSelected(False)
-
-                    self.__grid.cell[self.__oldIdx].setIsOccupied(False)
+                    self.__selectPion = None
                     self.__grid.cell[self.__oldIdx].setIsOccupiedBy("none")
-                    self.__grid.cell[j].setIsClicked(False)
-
+                    self.__grid.cell[self.__oldIdx].setIsClicked(False)
+                    self.__grid.cell[self.__idx].setIsClicked(False)
                     self.__pionIdToMove = 1000
-                    break
+                    self.__idx = 0
+            for k in range(self.__grid.cell.__len__()):
+                self.__grid.cell[k].setIsClicked(False)
+
+        #for i in range(self.__pion.__len__()):
+        #    if self.__pion[i].getIsSelected() == True:
+        #        self.__pionIdToMove = i
+        #if self.__pionIdToMove != 1000:
+        #    for j in range(self.__grid.cell.__len__()):
+        #        if self.__grid.cell[j].getIsClicked() == True and self.__grid.cell[j].getIsOccupied() == False:
+        #            self.__pion[self.__pionIdToMove].Move(self.__grid.cell[j].getX(), self.__grid.cell[j].getY())
+        #            self.__pion[self.__pionIdToMove].setGridPosition(j)
+        #            self.__pion[self.__pionIdToMove].setIsSelected(False)
+#
+        #            self.__grid.cell[self.__oldIdx].setIsOccupied(False)
+        #            self.__grid.cell[self.__oldIdx].setIsOccupiedBy("none")
+        #            self.__grid.cell[j].setIsClicked(False)
+#
+        #            self.__pionIdToMove = 1000
+        #            break
 
 
 
