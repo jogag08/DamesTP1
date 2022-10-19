@@ -10,6 +10,7 @@ class Pion(Cell):
     __team:str
     __gridPosition:int
     __isSelected:bool
+    __isAlive:bool
     def __init__(self, x, y ,size, color, idx, colorId, screenW, screenH, image, type, team, gridPosition):
         super().__init__(x, y, size, color, idx, colorId, screenW, screenH)
         self.setPionImage(image)
@@ -17,6 +18,7 @@ class Pion(Cell):
         self.setTeam(team)
         self.setGridPosition(gridPosition)
         self.setIsSelected(False)
+        self.setIsAlive(True)
 
     def setPionImage(self, path:str):
         self.image = pygame.image.load(path)
@@ -61,4 +63,10 @@ class Pion(Cell):
     def Move(self, newX, newY):
         self._x = newX
         self._y = newY
+
+    def setIsAlive(self,b):
+        self.__isAlive = b
+
+    def getIsAlive(self):
+        return self.__isAlive
 

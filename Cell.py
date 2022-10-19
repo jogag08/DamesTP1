@@ -12,8 +12,9 @@ class Cell:
     _screenH:int
     _colorId:str
     _isClicked:bool
-    _isOccupied:bool
     _isOccupiedBy:str
+    __isAvailable:bool
+    __dictId:int
     def __init__(self, x, y, size, color, idx, colorId, screenW, screenH):
         self._x = x
         self._y = y
@@ -24,8 +25,9 @@ class Cell:
         self._screenW = screenW
         self._screenH = screenH
         self._isClicked = False
-        self._isOccupied = False
         self._isOccupiedBy = "none"
+        self.__isAvailable = False
+        self.__dictId = 0
 
     def render(self, screen:Surface):
         cellRect = pygame.Rect(self._x, self._y, self._size, self._size)
@@ -58,15 +60,15 @@ class Cell:
     def getIsClicked(self):
         return self._isClicked
 
-    def setIsOccupied(self, o):
-        self._isOccupied = o
-
-    def getIsOccupied(self):
-        return self._isOccupied
-
     def setIsOccupiedBy(self, team):
         self._isOccupiedBy = team
 
     def getIsOccupiedBy(self):
         return self._isOccupiedBy
+
+    def setDictId(self, id):
+        self.__dictId = id
+
+    def getDictId(self):
+        return self.__dictId
 
