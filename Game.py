@@ -66,15 +66,6 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.onClick()
 
-    #def setCellsNoirs(self):
-    #    for i in range(self.__grid.getLength()):
-    #        if self.__grid.cell[i].getColorId() == "black":
-    #            cn = self.__grid.cell[i]
-    #            self.__cellsNoirs.append(cn)
-
-    #def getCellsNoirs(self):
-    #    return self.__listCellsNoirs
-
     def initPions(self, nbrPionsJoueur):
         idx = 0
         type = "pion"
@@ -109,6 +100,7 @@ class Game:
     def setDictio(self):
         for i in range(self.__grid.cell.__len__()):
             self.__dictio[i] = str(self.__grid.cell[i].getDictId())
+            print(self.__dictio)
 
     def setMousePos(self):
         self.mousePos = pygame.mouse.get_pos()
@@ -117,6 +109,7 @@ class Game:
         self.setMouseClick(True)
         self.setOldCellIdx()
         self.setCellIdx()
+        self.__isLoaded = False
 
     def setMouseClick(self, b):
         self.__mouseClick = b
@@ -151,13 +144,11 @@ class Game:
         return self.__oldIdx
 
     def checkSelectedPion(self):
-        #sel = False
         for i in range(self.__pion.__len__()):
             for j in range(self.__grid.cell.__len__()):
                 if self.__grid.cell[j].getIsClicked() == True and self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx():
                     self.__pion[i].setIsSelected(True)
                     self.__selectPion = self.__pion[i]
-                    #sel = True
                 elif self.__grid.cell[j].getIsClicked() == False and self.__pion[i].getGridPosition() == self.__grid.cell[j].getIdx():
                     self.__pion[i].setIsSelected(False)
 
@@ -178,7 +169,7 @@ class Game:
 
     def setClickedCell(self):
         for i in range(self.__grid.cell.__len__()):
-            if (self.__idx == self.__grid.cell[i].getIdx()) and self.__grid.cell[i].getColorId() == "noir": #and (self.__grid.cell[i].getIsOccupiedBy() == "blanc" or self.__grid.cell[i].getIsOccupiedBy() == "none"):
+            if (self.__idx == self.__grid.cell[i].getIdx()) and self.__grid.cell[i].getColorId() == "noir":
                 self.__grid.cell[i].setIsClicked(True)
                 self.setSelectHighLight(self.__grid.cell[i])
             elif self.__idx == 0 and self.__grid.cell[i].getColorId() == "noir" and self.__grid.cell[i].getIsOccupiedBy() == "noir":
@@ -210,7 +201,9 @@ class Game:
 
     def checkPossibleMoves(self):
         for i in range(self.__pion.__len__()):
-            if self.__pion[i].getIsSelected() == True and self.__isLoaded == False:
+            if self.__pion[i].getIsSelected() == True and self.__isLoaded == False and self.__pion[i].getGridPosition() == self.__idx:
+                print(self.__pion[i].getGridPosition())
+                self.__possibleMoves.clear()
                 #--------------------------Déplacements possibles pour les positions 7, 11, 13, 17
                 if self.__pion[i].getGridPosition() == 7 or self.__pion[i].getGridPosition() == 17 or self.__pion[i].getGridPosition() == 11 or self.__pion[i].getGridPosition() == 13:
                     if self.__pion[i].getType() == "pion":
@@ -220,19 +213,20 @@ class Game:
                             self.__possibleMoves.append(pm1)
                             self.__possibleMoves.append(pm2)
                         if self.__pion[i].getTeam() == "noir":
-                            pm1 = self.__pion[i].getGridPosition() - 4
-                            pm2 = self.__pion[i].getGridPosition() - 6
+                            pm1 = self.__pion[i].getGridPosition() + 4
+                            pm2 = self.__pion[i].getGridPosition() + 6
                             self.__possibleMoves.append(pm1)
                             self.__possibleMoves.append(pm2)
-                elif self.__pion[i].getType() == "reine":
-                    pm1 = self.__pion[i].getGridPosition() - 4
-                    pm2 = self.__pion[i].getGridPosition() - 6
-                    pm3 = self.__pion[i].getGridPosition() + 4
-                    pm4 = self.__pion[i].getGridPosition() + 6
-                    self.__possibleMoves.append(pm1)
-                    self.__possibleMoves.append(pm2)
-                    self.__possibleMoves.append(pm3)
-                    self.__possibleMoves.append(pm4)
+                    elif self.__pion[i].getType() == "reine":
+                        pm1 = self.__pion[i].getGridPosition() - 4
+                        pm2 = self.__pion[i].getGridPosition() - 6
+                        pm3 = self.__pion[i].getGridPosition() + 4
+                        pm4 = self.__pion[i].getGridPosition() + 6
+                        self.__possibleMoves.append(pm1)
+                        self.__possibleMoves.append(pm2)
+                        self.__possibleMoves.append(pm3)
+                        self.__possibleMoves.append(pm4)
+
                 #--------------------------Déplacements possibles pour les positions 5, 15
                 if self.__pion[i].getGridPosition() == 5 or self.__pion[i].getGridPosition() == 15:
                     if self.__pion[i].getType() == "pion":
@@ -242,11 +236,12 @@ class Game:
                         if self.__pion[i].getTeam() == "noir":
                             pm1 = self.__pion[i].getGridPosition() + 6
                             self.__possibleMoves.append(pm1)
-                elif self.__pion[i].getType() == "reine":
-                    pm1 = self.__pion[i].getGridPosition() - 4
-                    pm2 = self.__pion[i].getGridPosition() + 6
-                    self.__possibleMoves.append(pm1)
-                    self.__possibleMoves.append(pm2)
+                    elif self.__pion[i].getType() == "reine":
+                        pm1 = self.__pion[i].getGridPosition() - 4
+                        pm2 = self.__pion[i].getGridPosition() + 6
+                        self.__possibleMoves.append(pm1)
+                        self.__possibleMoves.append(pm2)
+
                 #--------------------------Déplacements possibles pour les positions 9, 19
                 if self.__pion[i].getGridPosition() == 9 or self.__pion[i].getGridPosition() == 19:
                     if self.__pion[i].getType() == "pion":
@@ -256,27 +251,59 @@ class Game:
                         if self.__pion[i].getTeam() == "noir":
                             pm1 = self.__pion[i].getGridPosition() + 4
                             self.__possibleMoves.append(pm1)
-                elif self.__pion[i].getType() == "reine":
-                    pm1 = self.__pion[i].getGridPosition() + 4
+                    elif self.__pion[i].getType() == "reine":
+                        pm1 = self.__pion[i].getGridPosition() + 4
+                        pm2 = self.__pion[i].getGridPosition() - 6
+                        self.__possibleMoves.append(pm1)
+                        self.__possibleMoves.append(pm2)
+
+                #--------------------------Déplacements possibles pour les positions 1, 3
+                if self.__pion[i].getGridPosition() == 21 or self.__pion[i].getGridPosition() == 23:
+                    pm1 = self.__pion[i].getGridPosition() - 4
                     pm2 = self.__pion[i].getGridPosition() - 6
                     self.__possibleMoves.append(pm1)
                     self.__possibleMoves.append(pm2)
-                #--------------------------Déplacements possibles pour les positions 1, 2
-                if self.__pion[i].getGridPosition() == 21 or self.__pion[i].getGridPosition() == 23:
-                    pm1 = self.__pion[i].GetGridPosition() - 4
-                    pm2 = self.__pion[i].GetGridPosition() - 6
-                    self.__possibleMoves.append(pm1)
-                    self.__possibleMoves.append(pm2)
+
                 #--------------------------Déplacements possibles pour les positions 21, 23
                 if self.__pion[i].getGridPosition() == 1 or self.__pion[i].getGridPosition() == 3:
-                    pm1 = self.__pion[i].GetGridPosition() + 4
-                    pm2 = self.__pion[i].GetGridPosition() + 6
+                    pm1 = self.__pion[i].getGridPosition() + 4
+                    pm2 = self.__pion[i].getGridPosition() + 6
                     self.__possibleMoves.append(pm1)
                     self.__possibleMoves.append(pm2)
                 self.__isLoaded = True
 
+
+    #def checkPossibleKills(self):
+    #    for i in range(self.__possibleMoves.__len__()):
+    #        for i in range(self.__grid.cell.__len__()):
+    #            if self.__possibleMoves[i] == self.grid.cell[k].getIdx() and self.grid.cell[k].getIsOccupiedBy() != "none"
+    #            #--------------------------Kills possibles pour la position 1
+    #                if self.__pion[i].getGridPosition() == 1 or self.__pion[i].getGridPosition() == 17 or self.__pion[i].getGridPosition() == 11 or self.__pion[i].getGridPosition() == 13:
+    #                    if self.__pion[i].getType() == "pion":
+    #                        if self.__pion[i].getTeam() == "blanc":
+    #                            pm1 = self.__pion[i].getGridPosition() - 4
+    #                            pm2 = self.__pion[i].getGridPosition() - 6
+    #                            self.__possibleMoves.append(pm1)
+    #                            self.__possibleMoves.append(pm2)
+    #                        if self.__pion[i].getTeam() == "noir":
+    #                            pm1 = self.__pion[i].getGridPosition() + 4
+    #                            pm2 = self.__pion[i].getGridPosition() + 6
+    #                            self.__possibleMoves.append(pm1)
+    #                            self.__possibleMoves.append(pm2)
+    #                    elif self.__pion[i].getType() == "reine":
+    #                        pm1 = self.__pion[i].getGridPosition() - 4
+    #                        pm2 = self.__pion[i].getGridPosition() - 6
+    #                        pm3 = self.__pion[i].getGridPosition() + 4
+    #                        pm4 = self.__pion[i].getGridPosition() + 6
+    #                        self.__possibleMoves.append(pm1)
+    #                        self.__possibleMoves.append(pm2)
+    #                        self.__possibleMoves.append(pm3)
+    #                        self.__possibleMoves.append(pm4)
+
     def TEST(self):
         pass
+        #print(self.__isLoaded)
+        #print(self.__possibleMoves)
         #print(self.__selectPion)
         #for i in range(self.__grid.cell.__len__()):
         #    print(i,self.__grid.cell[i].getIsClicked())
@@ -286,8 +313,8 @@ class Game:
 
     def updatePionsState(self):
         self.checkSelectedPion()
-        self.checkPossibleMoves()
         self.movePlayerPion()
+        self.checkPossibleMoves()
         self.checkPionType()
 
     def updateCellsState(self):
@@ -303,50 +330,19 @@ class Game:
         for i in range(self.__pion.__len__()):
             if self.__pion[i].getIsSelected() == True:
                 self.__pionIdToMove = i
-                #print(self.__pionIdToMove)
         if self.__pionIdToMove != 1000:
             for j in range(self.__grid.cell.__len__()):
-                if self.__grid.cell[j].getIsClicked() == True and (self.__grid.cell[j].getIsOccupiedBy() == "none"):
-                    self.__pion[self.__pionIdToMove].Move(self.__grid.cell[j].getX(), self.__grid.cell[j].getY())
-                    self.__pion[self.__pionIdToMove].setGridPosition(j)
-                    self.__pion[self.__pionIdToMove].setIsSelected(False)
-                    self.__selectPion = None
-                    self.__grid.cell[self.__oldIdx].setIsOccupiedBy("none")
-                    self.__grid.cell[self.__oldIdx].setIsClicked(False)
-                    self.__grid.cell[self.__oldIdx].setIsClicked(False)
-                    self.__pionIdToMove = 1000
-                    self.__idx = 0
-                    self.__possibleMoves.clear()
-                    self.__isLoaded = False
-            #for k in range(self.__grid.cell.__len__()):
-            #    self.__grid.cell[k].setIsClicked(False)
-
-        #for i in range(self.__pion.__len__()):
-        #    if self.__pion[i].getIsSelected() == True:
-        #        self.__pionIdToMove = i
-        #if self.__pionIdToMove != 1000:
-        #    for j in range(self.__grid.cell.__len__()):
-        #        if self.__grid.cell[j].getIsClicked() == True and self.__grid.cell[j].getIsOccupied() == False:
-        #            self.__pion[self.__pionIdToMove].Move(self.__grid.cell[j].getX(), self.__grid.cell[j].getY())
-        #            self.__pion[self.__pionIdToMove].setGridPosition(j)
-        #            self.__pion[self.__pionIdToMove].setIsSelected(False)
-#
-        #            self.__grid.cell[self.__oldIdx].setIsOccupied(False)
-        #            self.__grid.cell[self.__oldIdx].setIsOccupiedBy("none")
-        #            self.__grid.cell[j].setIsClicked(False)
-#
-        #            self.__pionIdToMove = 1000
-        #            break
-
-
-
-        #for i in range(self.__cellsNoirs.__len__()):
-        #    #print('curr',self.__selectPionPos)
-        #    #print(self.__grid.cell[i].getIdx())
-        #    if self.__selectPionPos == self.__pion[i].getGridPosition():
-        #        self.__pion[].Move(0,0)
-
-
+                for k in range(self.__possibleMoves.__len__()):
+                    if self.__grid.cell[j].getIsClicked() == True and (self.__grid.cell[j].getIsOccupiedBy() == "none") and self.__grid.cell[j].getIdx() == self.__possibleMoves[k]:
+                        self.__pion[self.__pionIdToMove].Move(self.__grid.cell[j].getX(), self.__grid.cell[j].getY())
+                        self.__pion[self.__pionIdToMove].setGridPosition(j)
+                        self.__pion[self.__pionIdToMove].setIsSelected(False)
+                        self.__grid.cell[self.__oldIdx].setIsOccupiedBy("none")
+                        self.__grid.cell[self.__oldIdx].setIsClicked(False)
+                        self.__pionIdToMove = 1000
+                        self.__idx = 0
+                        self.__possibleMoves.clear()
+                        self.__isLoaded = False
 
 class Timer:
     _clock = None
